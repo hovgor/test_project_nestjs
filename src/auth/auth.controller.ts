@@ -27,10 +27,9 @@ export class AuthController {
             let accessToken = await this.authService.loginAndJwt(body.email.toLowerCase(), jwtConstants.expiresIn);
             let refreshToken = await this.authService.loginAndJwt(body.email.toLocaleLowerCase(),jwtConstants.refreshToken); 
             
-            return res.status(HttpStatus.OK).json({
-                "accessToken": accessToken,
-                "refreshToken": refreshToken    
-        });
+            return res.status(HttpStatus.OK).json(
+                 accessToken 
+        );
         } catch (error) {
             throw new UnprocessableEntityException(error);
         }
@@ -54,12 +53,12 @@ export class AuthController {
 
             const newUser = await this.userService.createUser({
                 full_name: body.full_name,
-                email:body.email.toLowerCase(),
+                email: body.email.toLowerCase(),
                 password: sha1(body.password)
             });
 
            return res.status(HttpStatus.OK).json({
-               success:true,
+               success: true,
                new_user_name: body.full_name
            });
 
@@ -67,5 +66,6 @@ export class AuthController {
             throw new UnprocessableEntityException(error);
         }
     }
+
 
 }

@@ -28,4 +28,19 @@ export class AuthService {
         }
 
     }
+
+// access and update tokens are missing from the database, that's why it "logout" doesn't work
+    //LOGOUT
+	// async logout(accessToken: string) {
+	// 	try {
+	// 		//revoke user session
+	// 		await this.userSessionService.revokeSession(accessToken);
+	// 	}
+	// 	catch(error) {
+	// 		Logger.log('logout: error =>', error);
+	// 		throw {
+	// 			message: error.message
+	// 		};
+	// 	}
+	// }
 }
