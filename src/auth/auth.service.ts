@@ -3,6 +3,8 @@ import { User } from 'src/user/user.entity';
 import { Repository } from "typeorm";
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Auth } from './auth.entity';
+import { TokenDto } from './dto/tokenDto';
 
 
 @Injectable()
@@ -10,7 +12,9 @@ export class AuthService {
     constructor(
         @InjectRepository(User)
         private userRepository: Repository<User> ,
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        @InjectRepository(Auth) 
+        private authRepository: Repository<Auth>
     ){}
     
     // login
@@ -27,6 +31,15 @@ export class AuthService {
             throw error;
         }
 
+    }
+    // insert tokens in db
+    async insertToken (token: TokenDto){
+        try {
+            await this.authRepository.save(this.authRepository.create(token));
+        } catch (error) {
+            Logger.log('error=> ',error);
+            throw error;
+        }
     }
 
 // access and update tokens are missing from the database, that's why it "logout" doesn't work

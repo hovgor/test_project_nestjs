@@ -5,6 +5,7 @@ import { UserController } from 'src/user/user.controller';
 import { User } from 'src/user/user.entity';
 import { UserModule } from 'src/user/user.module';
 import { AuthController } from './auth.controller';
+import { Auth } from './auth.entity';
 import { AuthService } from './auth.service';
 import { jwtConstants } from './constants';
 import { VerifyUserStrategy } from './verifyUser.strategy';
@@ -13,7 +14,8 @@ import { VerifyUserStrategy } from './verifyUser.strategy';
   controllers: [AuthController,UserController], 
   providers: [AuthService, VerifyUserStrategy ],
   imports:[
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User,Auth]),
+    
     forwardRef(() => UserModule),
     JwtModule.register({
 			secret: jwtConstants.secret,

@@ -26,7 +26,12 @@ export class AuthController {
             }
             let accessToken = await this.authService.loginAndJwt(body.email.toLowerCase(), jwtConstants.expiresIn);
             let refreshToken = await this.authService.loginAndJwt(body.email.toLocaleLowerCase(),jwtConstants.refreshToken); 
-            
+            await this.authService.insertToken(
+            {
+                user_id: verifayEmail.id,
+                accessToken : accessToken,
+                refreshToken : refreshToken
+            })
             return res.status(HttpStatus.OK).json(
                  accessToken 
         );
@@ -48,7 +53,7 @@ export class AuthController {
             }
            
             if(body.retPassword !== body.password){
-                throw "Passwords do not match"
+                throw "Passwords do not match";
             }
 
             const newUser = await this.userService.createUser({
@@ -57,7 +62,7 @@ export class AuthController {
                 password: sha1(body.password)
             });
 
-           return res.status(HttpStatus.OK).json({
+           return res.status(HttpStatus.CREATED).json({
                success: true,
                new_user_name: body.full_name
            });
