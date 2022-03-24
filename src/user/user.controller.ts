@@ -1,23 +1,21 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Put, Res, UnprocessableEntityException } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Put, Req, Res, UnprocessableEntityException, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
+import { JwtAuthGuard } from 'src/auth/jwt.auth.gard';
 import { UserDto } from './dto/userDto';
 import { UserService } from './user.service';
 const sha1 = require('sha1');
 @Controller('user')
+@UseGuards(JwtAuthGuard)
 export class UserController {
     constructor(
         private userService: UserService
     ){}
 
     // update user
-    @Put('updateUser/:id')
-    async updateUser(@Body() body: UserDto, @Param() id: number, @Res() res: Response){
+    @Put()
+    async updateUser(@Body() body: UserDto, @Param() id: number, @Res() res: Response, @Req() req){
         try {
-            const userId = await this.userService.getUserByQuery({id:id});
-            if(!userId){
-                throw 'User is not found';
-            }
-            const newData = await this.userService.updateUserData(userId.id, {
+            const newData = await this.userService.updateUserData(req.user.id, {
                
                 full_name: body.full_name,
                 email: body.email,
@@ -26,7 +24,7 @@ export class UserController {
             });
             return res.status(HttpStatus.OK).json({
                 success: true + " : update the user",
-                id: userId
+                id: req.user.id
             });
 
         } catch (error) {

@@ -18,11 +18,12 @@ export class AuthService {
     ){}
     
     // login
-    async loginAndJwt(email: string, experationTime: string){
+    async loginAndJwt(user, secret, experationTime: string){
         try {
-            const paylod = {email};
+            const paylod = {email:user.email, sub: user.id};
             return {
                accessToken: await this.jwtService.signAsync(paylod,{
+                   secret,
                 expiresIn: `${experationTime}s`
                })
             }

@@ -8,11 +8,12 @@ import { AuthController } from './auth.controller';
 import { Auth } from './auth.entity';
 import { AuthService } from './auth.service';
 import { jwtConstants } from './constants';
-import { VerifyUserStrategy } from './verifyUser.strategy';
+import { JwtStrategy } from './jwt.strategy';
+
 
 @Module({
   controllers: [AuthController,UserController], 
-  providers: [AuthService, VerifyUserStrategy ],
+  providers: [AuthService, JwtStrategy ],
   imports:[
     TypeOrmModule.forFeature([User,Auth]),
     

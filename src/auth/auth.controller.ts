@@ -17,18 +17,18 @@ export class AuthController {
     @Post('login')
     async login(@Res() res: Response, @Body() body: AuthLoginDto){
         try {
-            let verifayEmail = await this.userService.getUserByQuery({email: body.email.toLowerCase()});
-            if(!verifayEmail){
+            let user = await this.userService.getUserByQuery({email: body.email.toLowerCase()});
+            if(!user){
                 throw "User with this email does not exists";
             }
-            if(sha1(body.password) !== verifayEmail.password){
+            if(sha1(body.password) !== user.password){
                 throw " email or password not found !!! \n pleas lets try agen ";
             }
-            let accessToken = await this.authService.loginAndJwt(body.email.toLowerCase(), jwtConstants.expiresIn);
-            let refreshToken = await this.authService.loginAndJwt(body.email.toLocaleLowerCase(),jwtConstants.refreshToken); 
+            let accessToken = await this.authService.loginAndJwt(user, 'aaaa', jwtConstants.expiresIn);
+            let refreshToken = await this.authService.loginAndJwt(user, 'aaaa', jwtConstants.refreshToken); 
             await this.authService.insertToken(
             {
-                user_id: verifayEmail.id,
+                user_id: user.id,
                 accessToken : accessToken,
                 refreshToken : refreshToken
             })
