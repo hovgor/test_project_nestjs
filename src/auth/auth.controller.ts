@@ -1,10 +1,11 @@
-import { Body, Controller, HttpStatus, Post, Res, UnprocessableEntityException } from '@nestjs/common';
+import { Body, Controller, Delete, HttpStatus, Post, Req, Res, UnprocessableEntityException, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
 import { jwtConstants } from './constants';
 import { AuthLoginDto } from './dto/loginDto';
 import { RegisterDto } from './dto/registerDto';
+import { JwtAuthGuard } from './jwt.auth.gard';
 const sha1 = require('sha1');
 
 @Controller('auth')
@@ -33,7 +34,7 @@ export class AuthController {
                 refreshToken : refreshToken
             })
             return res.status(HttpStatus.OK).json(
-                 accessToken 
+                 {accessToken} 
         );
         } catch (error) {
             throw new UnprocessableEntityException(error);
@@ -72,5 +73,18 @@ export class AuthController {
         }
     }
 
+    // logout
+    @Delete()
+    @UseGuards(JwtAuthGuard)
+    async logout(@Res() res: Response, @Req() req, ){
+      try {
+        await this.authService.logout(req.headers.authorization.replace('Bearer ', ''));
+        res.status(HttpStatus.RESET_CONTENT).json({
+            success: true
+        })
+      } catch (error) {
+          throw new UnprocessableEntityException(error);
+      }
+    }
 
 }

@@ -18,15 +18,16 @@ export class AuthService {
     ){}
     
     // login
-    async loginAndJwt(user, secret, experationTime: string){
+    async loginAndJwt(user, secret: string, experationTime: string){
         try {
-            const paylod = {email:user.email, sub: user.id};
-            return {
-               accessToken: await this.jwtService.signAsync(paylod,{
-                   secret,
-                expiresIn: `${experationTime}s`
-               })
-            }
+            const payload = {email:user.email, sub: user.id};
+            return this.jwtService.signAsync(payload,
+                {
+                    secret: secret,
+                    expiresIn: `${experationTime}s`
+                }
+            );
+            
         } catch (error) {
             Logger.log('error=> ',error);
             throw error;
@@ -36,25 +37,25 @@ export class AuthService {
     // insert tokens in db
     async insertToken (token: TokenDto){
         try {
-            await this.authRepository.save(this.authRepository.create(token));
+           return await this.authRepository.save(this.authRepository.create(token));
         } catch (error) {
             Logger.log('error=> ',error);
             throw error;
         }
     }
 
-// access and update tokens are missing from the database, that's why it "logout" doesn't work
     //LOGOUT
-	// async logout(accessToken: string) {
-	// 	try {
-	// 		//revoke user session
-	// 		await this.userSessionService.revokeSession(accessToken);
-	// 	}
-	// 	catch(error) {
-	// 		Logger.log('logout: error =>', error);
-	// 		throw {
-	// 			message: error.message
-	// 		};
-	// 	}
-	// }
+	async logout(accessToken: string) {
+		try {
+			//revoke user session
+			await this.authRepository.delete({accessToken: accessToken});
+		}
+		catch(error) {
+			Logger.log('logout: error =>', error);
+			throw {
+				message: error.message
+			};
+		}
+	}
 }
+
